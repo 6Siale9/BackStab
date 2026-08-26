@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private EInputMode _inputMode;
     
     private Vector2 _directionController;
+    private Vector2 _savedDirection;
 
     private float _upAxisValueKeyboard = 0f;
     private float _downAxisValueKeyboard = 0f;
@@ -34,6 +36,8 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private float _arrowSpeed = 1;
     [SerializeField] private float _arrowStopCd = 1;
     private List<ArrowController> _arrowsFired = new List<ArrowController>();
+
+    [SerializeField] private Image _cursorController;
 
     public List<ArrowController> ArrowsFired { get => _arrowsFired; set => _arrowsFired = value; }
 
@@ -57,6 +61,8 @@ public class PlayerInput : MonoBehaviour
         _controls.GameplayKeyboard.MoveRight.canceled += ctx => _rightAxisValueKeyboard = 0;
 
         _controls.GameplayKeyboard.Dash.performed += ctx => Dash();
+        _controls.GameplayKeyboard.Attack.performed += ctx => Shoot();
+        _controls.GameplayKeyboard.Special.performed += ctx => Return();
 
         _controls.GameplayKeyboard.Enable();
 
@@ -84,6 +90,7 @@ public class PlayerInput : MonoBehaviour
             break;
         }
         DashLogic();
+        DirLogic();
     }
 
     private void VelocityKeyboard()
@@ -94,6 +101,10 @@ public class PlayerInput : MonoBehaviour
     private void VelocityController()
     {
         _rb.velocity = _directionController.normalized * _moveSpeed;
+        if (_rb.velocity.magnitude > 0)
+        {
+            _savedDirection = _rb.velocity.normalized;
+        }
     }
 
     private void ReadVectorValue(Vector2 vector)
@@ -140,7 +151,17 @@ public class PlayerInput : MonoBehaviour
         {
             GameObject arrow = Instantiate(_arrowPrefab, gameObject.transform.position, gameObject.transform.rotation);
             Rigidbody2D arrowRb = arrow.GetComponent<Rigidbody2D>();
-            arrowRb.velocity = _rb.velocity.normalized * _arrowSpeed;
+            if (EInputMode.Controller == _inputMode)
+            {
+                arrowRb.velocity = _savedDirection * _arrowSpeed;
+            }
+            else if ((EInputMode.Keyboard == _inputMode))
+            {
+                Vector2 origin = transform.position;
+                Vector2 dest = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 dir = dest - origin;
+                arrowRb.velocity = dir.normalized * _arrowSpeed;
+            }
             ArrowController controller = arrow.GetComponent<ArrowController>();
             ArrowsFired.Add(controller);
             controller.Player = this;
@@ -154,6 +175,21 @@ public class PlayerInput : MonoBehaviour
         for (int i = 0; i < _arrowsFired.Count; i++)
         {
             _arrowsFired[i].Return();
+        }
+    }
+
+    private void DirLogic()
+    {
+        if (EInputMode.Keyboard == _inputMode)
+        {
+            Vector2 origin = transform.position;
+            Vector2 dest = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 dir = dest - origin;
+            _cursorController.gameObject.transform.up = -dir.normalized;
+        }
+        else if (EInputMode.Controller == _inputMode)
+        {
+            _cursorController.gameObject.transform.up = -_savedDirection;
         }
     }
 }
