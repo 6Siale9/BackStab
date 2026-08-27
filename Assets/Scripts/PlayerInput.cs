@@ -11,6 +11,8 @@ public class PlayerInput : MonoBehaviour
 
     private Rigidbody2D _rb;
 
+    private int _hp = 2;
+
     [SerializeField] private EInputMode _inputMode;
     
     private Vector2 _directionController;
@@ -40,6 +42,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private Image _cursorController;
 
     public List<ArrowController> ArrowsFired { get => _arrowsFired; set => _arrowsFired = value; }
+    public int Hp { get => _hp; set => _hp = value; }
 
     private void Awake()
     {
@@ -76,6 +79,13 @@ public class PlayerInput : MonoBehaviour
         _controls.GameplayController.Special.performed += ctx => Return();
 
         _controls.GameplayController.Enable();
+
+
+
+
+
+
+        GlobalManager.Instance.Players.Add(this);
     }
 
     private void Update()

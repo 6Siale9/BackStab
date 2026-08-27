@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArrowController : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class ArrowController : MonoBehaviour
 
     private PlayerInput _player;
 
-
+    [SerializeField] private Image _image;
 
 
 
@@ -35,6 +36,21 @@ public class ArrowController : MonoBehaviour
     {
         StopLogic();
         GoLogic();
+        SetOrientation();
+    }
+
+    private void SetOrientation()
+    {
+        Vector2 origin = transform.position;
+        Vector2 dest = _player.transform.position;
+        Vector2 dir = dest - origin;
+        _image.transform.up = dir;
+        /*
+        if (_rb.velocity.magnitude > 0)
+        {
+            _image.transform.up = _rb.velocity.normalized;
+        }
+        */
     }
 
     private void StopLogic()
