@@ -26,6 +26,7 @@ public class ArrowController : MonoBehaviour
     public float Speed { get => _speed; set => _speed = value; }
     public PlayerInput Player { get => _player; set => _player = value; }
     public float StopCd { get => _stopCd; set => _stopCd = value; }
+    public bool Go { get => _go; set => _go = value; }
 
     private void Start()
     {
@@ -70,13 +71,13 @@ public class ArrowController : MonoBehaviour
     {
         if (_stopped)
         {
-            _go = true;
+            Go = true;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "player" && _stopped)
+        if (collision.tag == "Player" && _stopped)
         {
             _player.ArrowsFired.Remove(this);
             Destroy(gameObject);
@@ -85,7 +86,7 @@ public class ArrowController : MonoBehaviour
 
     private void GoLogic()
     {
-        if (_go)
+        if (Go)
         {
             _rb.velocity = (_player.transform.position - gameObject.transform.position).normalized * _speed;
         }

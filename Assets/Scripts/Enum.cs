@@ -5,5 +5,6 @@ using UnityEngine;
 public enum EInputMode
 {
     Controller,
-    Keyboard
+    Keyboard,
+    Dead
 }

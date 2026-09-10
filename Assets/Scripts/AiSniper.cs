@@ -9,10 +9,20 @@ public class AiSniper : MonoBehaviour
 
     private float _attackCd;
 
+    public List<EnemySniper> Snipers { get => _snipers; set => _snipers = value; }
+
     // Start is called before the first frame update
     void Start()
     {
+        Initialize();
+    }
 
+    private void Initialize()
+    {
+        for (int i = 0; i < _snipers.Count; i++)
+        {
+            _snipers[i].AiSuperior = this;
+        }
     }
 
     // Update is called once per frame
@@ -36,28 +46,28 @@ public class AiSniper : MonoBehaviour
     private void Attack()
     {
 
-        if (_snipers.Count > 1)
+        if (Snipers.Count > 1)
         {
             List<EnemySniper> toGo = new List<EnemySniper>();
-            for (int i = 0; i < _snipers.Count; i++)
+            for (int i = 0; i < Snipers.Count; i++)
             {
-                if (_snipers[i] != _lastAttacker)
+                if (Snipers[i] != _lastAttacker)
                 {
-                    toGo.Add(_snipers[i]);
+                    toGo.Add(Snipers[i]);
                 }
             }
             int a = Random.Range(0, toGo.Count);
             toGo[a].OrderAttack();
             _lastAttacker = toGo[a];
         }
-        else if (_snipers.Count == 1)
+        else if (Snipers.Count == 1)
         {
-            _snipers[0].OrderAttack();
-            _lastAttacker = _snipers[0];
+            Snipers[0].OrderAttack();
+            _lastAttacker = Snipers[0];
         }
-        else if (_snipers.Count == 0)
+        else if (Snipers.Count == 0)
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
         _attackCd = Random.Range(0, 1.75f);
     }

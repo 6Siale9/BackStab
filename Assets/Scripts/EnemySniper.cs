@@ -4,12 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class EnemySniper: MonoBehaviour
+public class EnemySniper : MonoBehaviour
 {
     private List<PlayerInput> _targets = new List<PlayerInput>();
     private GameObject _lockedOnTarget;
 
-    private bool _elite = false;
+    private AiSniper _aiSuperior;
+
+    [SerializeField] private Rigidbody2D _rb;
+
+    [SerializeField] private bool _elite = false;
 
     private float _windUpTime;
     private float _attackTime;
@@ -18,7 +22,18 @@ public class EnemySniper: MonoBehaviour
     private bool _canRotate = true;
     private bool _damageTiming = false;
 
-    [SerializeField] private Image _blast;
+    [SerializeField] private GameObject _blast;
+
+    [SerializeField] private Image _blastImg;
+    [SerializeField] private Image _body;
+
+    private bool _hurt = false;
+    private float _hurtTime;
+    private Vector2 _hurtDir = Vector2.zero;
+    private bool _condemnt = false;
+
+    public AiSniper AiSuperior { get => _aiSuperior; set => _aiSuperior = value; }
+    public bool Elite { get => _elite; set => _elite = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -30,10 +45,20 @@ public class EnemySniper: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        AttackLogic();
-        SetOrientation();
-        Attack();
-
+        if (!_hurt)
+        {
+            SetOrientation();
+            AttackLogic();
+            Attack();
+        }
+        else
+        {
+            Hurt();
+        }
+        if (Elite)
+        {
+            ColorLogic();
+        }
 
 
 
@@ -41,7 +66,20 @@ public class EnemySniper: MonoBehaviour
         // Debug !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (Input.GetKeyDown(KeyCode.Keypad0))
         {
-            OrderAttack();
+            Debug.Log("Debug");
+            GotHit();
+        }
+    }
+
+    private void ColorLogic()
+    {
+        if (_hurt)
+        {
+            _body.color = new Color(1, 1, 1, 1);
+        }
+        else
+        {
+            _body.color = new Color(0.8207547f, 0.7538613f, 0.2051887f, 1);
         }
     }
 
@@ -58,6 +96,8 @@ public class EnemySniper: MonoBehaviour
 
     public void OrderAttack()
     {
+        if (!_hurt && !_attacking)
+        {
         float dist = 0;
         for (int i = 0; i < _targets.Count; i++)
         {
@@ -83,6 +123,7 @@ public class EnemySniper: MonoBehaviour
         }
         _windUpTime = .75f;
         _attacking = true;
+        }
     }
 
 
@@ -91,7 +132,7 @@ public class EnemySniper: MonoBehaviour
         if (_windUpTime >= 0 && _attacking)
         {
             _windUpTime -= Time.deltaTime;
-            _blast.color = new Color(1, 1, 1, (0.75f-_windUpTime));
+            _blastImg.color = new Color(1, 1, 1, (0.75f - _windUpTime));
         }
         else if (_windUpTime < 0)
         {
@@ -101,7 +142,7 @@ public class EnemySniper: MonoBehaviour
             _attackTime = 0.25f;
             _blastRemainTime = .5f;
             _damageTiming = true;
-            _blast.color = new Color(1, 1, 1, 1);
+            _blastImg.color = new Color(1, 1, 1, 1);
         }
     }
 
@@ -109,24 +150,52 @@ public class EnemySniper: MonoBehaviour
     {
         if (_damageTiming)
         {
-        if (_attackTime >= 0)
-        {
-            _attackTime -= Time.deltaTime;
-            Debug.Log("1");
+            if (_attackTime >= 0)
+            {
+                _attackTime -= Time.deltaTime;
+            }
+            else if (_blastRemainTime >= 0)
+            {
+                _blast.SetActive(true);
+                _blastRemainTime -= Time.deltaTime;
+                _blastImg.color = new Color(1, 0, 0.3137255f, 1);
+            }
+            else
+            {
+                _blast.SetActive(false);
+                _canRotate = true;
+                _blastImg.color = new Color(1, 1, 1, 0);
+                _damageTiming = false;
+            }
         }
-        else if (_blastRemainTime >= 0)
+    }
+
+    private void GotHit()
+    {
+        _blast.SetActive(false);
+        _hurt = true;
+        _hurtTime = 1.5f;
+        _blastImg.color = new Color(1, 1, 1, 0);
+        _hurtDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+    }
+
+    private void Hurt()
+    {
+        transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 360);
+        _rb.velocity = _hurtDir * _hurtTime * 2.5f;
+        if (_hurtTime > 0)
         {
-            _blastRemainTime -= Time.deltaTime;
-            _blast.color = new Color(1, 0, 0.3137255f, 1);
-            Debug.Log("2");
+            _hurtTime -= Time.deltaTime;
         }
         else
         {
-            _canRotate = true;
-            _blast.color = new Color(1, 1, 1, 0);
-            Debug.Log("3");
-            _damageTiming = false;
-        }
+            if (_condemnt)
+            {
+                Destroy(gameObject);
+                _aiSuperior.Snipers.Remove(this);
+            }
+            _hurt = false;
+            _hurtTime = 0;
         }
     }
 
@@ -138,6 +207,22 @@ public class EnemySniper: MonoBehaviour
             Vector2 dest = _lockedOnTarget.transform.position;
             Vector2 dir = dest - origin;
             transform.up = dir.normalized;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Arrow"))
+        {
+            ArrowController arrow = collision.gameObject.GetComponent<ArrowController>();
+            if (arrow.Go)
+            {
+                if (!Elite || _hurt)
+                {
+                    _condemnt = true;
+                }
+            }
+            GotHit();
         }
     }
 }

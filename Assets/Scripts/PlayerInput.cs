@@ -39,7 +39,10 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private float _arrowStopCd = 1;
     private List<ArrowController> _arrowsFired = new List<ArrowController>();
 
+    [Header("Img")]
     [SerializeField] private Image _cursorController;
+    [SerializeField] private Image _base;
+    [SerializeField] private Image _baseDamaged;
 
     public List<ArrowController> ArrowsFired { get => _arrowsFired; set => _arrowsFired = value; }
     public int Hp { get => _hp; set => _hp = value; }
@@ -103,6 +106,29 @@ public class PlayerInput : MonoBehaviour
         DirLogic();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            GotHit();
+        }
+    }
+
+    public void GotHit()
+    {
+        if (_hp == 2)
+        {
+            _hp = 1;
+            _base.color = new Color(1, 1, 1, 0);
+        }
+        else
+        {
+            _baseDamaged.color = new Color(1, 1, 1, 0);
+            _inputMode = EInputMode.Dead;
+            _rb.velocity = Vector2.zero;
+        }
+    }
+
     private void VelocityKeyboard()
     {
         _rb.velocity = new Vector2(_rightAxisValueKeyboard + -_leftAxisValueKeyboard, _upAxisValueKeyboard + -_downAxisValueKeyboard).normalized * _moveSpeed;
@@ -127,8 +153,7 @@ public class PlayerInput : MonoBehaviour
 
     private void Dash()
     {
-        Debug.Log("Dash");
-        if (_dashCd == 0)
+        if (_dashCd == 0 && _inputMode != EInputMode.Dead)
         {
             _dashCd = _dashCdValue;
             _moveSpeed = _dashMoveSpeed;
@@ -157,7 +182,7 @@ public class PlayerInput : MonoBehaviour
 
     private void Shoot()
     {
-        if (ArrowsFired.Count < _arrowCapacity)
+        if (ArrowsFired.Count < _arrowCapacity && _inputMode != EInputMode.Dead)
         {
             GameObject arrow = Instantiate(_arrowPrefab, gameObject.transform.position, gameObject.transform.rotation);
             Rigidbody2D arrowRb = arrow.GetComponent<Rigidbody2D>();
@@ -182,9 +207,12 @@ public class PlayerInput : MonoBehaviour
 
     private void Return()
     {
-        for (int i = 0; i < _arrowsFired.Count; i++)
+        if (_inputMode != EInputMode.Dead)
         {
-            _arrowsFired[i].Return();
+            for (int i = 0; i < _arrowsFired.Count; i++)
+            {
+                _arrowsFired[i].Return();
+            }
         }
     }
 

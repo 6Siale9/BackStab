@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 864594714550162187}
   m_Layer: 6
   m_Name: Arrow
-  m_TagString: Untagged
+  m_TagString: Arrow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 1
 --- !u!1 &1543601716411359602
 GameObject:
   m_ObjectHideFlags: 0
