@@ -4,12 +4,31 @@ using UnityEngine;
 
 public class AiSniper : MonoBehaviour
 {
+    private static AiSniper _instance;
+    public static AiSniper Instance { get => _instance; set => _instance = value; }
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+
+
+
     [SerializeField] private List<EnemySniper> _snipers = new List<EnemySniper>();
+
     private EnemySniper _lastAttacker;
 
     private float _attackCd;
 
     public List<EnemySniper> Snipers { get => _snipers; set => _snipers = value; }
+
 
     // Start is called before the first frame update
     void Start()
@@ -67,7 +86,8 @@ public class AiSniper : MonoBehaviour
         }
         else if (Snipers.Count == 0)
         {
-            //Destroy(gameObject);
+
+            Destroy(gameObject);
         }
         _attackCd = Random.Range(0, 1.75f);
     }

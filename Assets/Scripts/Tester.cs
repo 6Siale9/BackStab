@@ -12,7 +12,7 @@ public class Tester : MonoBehaviour
 
     private Operator _operator;
     private GameObject _toSpawn;
-    private bool _spawnElite;
+    private bool _spawnElite = false;
 
     
     public Operator Operator { get => _operator; set => _operator = value; }

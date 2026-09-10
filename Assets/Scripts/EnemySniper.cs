@@ -13,6 +13,8 @@ public class EnemySniper : MonoBehaviour
 
     [SerializeField] private Rigidbody2D _rb;
 
+    [SerializeField] private AiSniper _manager;
+
     [SerializeField] private bool _elite = false;
 
     private float _windUpTime;
@@ -39,7 +41,8 @@ public class EnemySniper : MonoBehaviour
     void Start()
     {
         GetAllPlayer();
-        OrderAttack(); //TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        CheckForAi();
+        OrderAttack();
     }
 
     // Update is called once per frame
@@ -68,6 +71,19 @@ public class EnemySniper : MonoBehaviour
         {
             Debug.Log("Debug");
             GotHit();
+        }
+    }
+
+    private void CheckForAi()
+    {
+        if (AiSniper.Instance == null)
+        {
+            AiSniper manager = Instantiate(_manager);
+            manager.Snipers.Add(this);
+        }
+        else
+        {
+            AiSniper.Instance.Snipers.Add(this);
         }
     }
 

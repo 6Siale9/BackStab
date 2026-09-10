@@ -380,6 +380,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb: {fileID: 7946860858494073773}
+  _manager: {fileID: 6791700155719339502, guid: de155660fe030164eb9dc433c62cde86, type: 3}
   _elite: 0
   _blast: {fileID: 2384714625676958991}
   _blastImg: {fileID: 6964928960687814676}

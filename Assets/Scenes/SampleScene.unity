@@ -508,7 +508,8 @@ MonoBehaviour:
   _tester: {fileID: 7002272201885041153, guid: 269070f3f0ae5184a82564a74ed59495, type: 3}
   _enemyTypes:
   - {fileID: 3993287412597477516, guid: fc88ce9a1be65d14580fec010a68d56b, type: 3}
-  _enemyCosts: 01000000
+  - {fileID: 3993287412597477516, guid: fc88ce9a1be65d14580fec010a68d56b, type: 3}
+  _enemyCosts: 0100000001000000
 --- !u!4 &936488678
 Transform:
   m_ObjectHideFlags: 0
