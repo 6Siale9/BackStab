@@ -19,10 +19,12 @@ public class Tester : MonoBehaviour
     public GameObject ToSpawn { get => _toSpawn; set => _toSpawn = value; }
     public bool SpawnElite { get => _spawnElite; set => _spawnElite = value; }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+
+
+    private void Start()
     {
-        int i = _collider.OverlapCollider(_filter, _colliders);
-        if (i > 0)
+        //int i = _collider.OverlapCollider(_filter, _colliders); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (false/*i > 0*/)
         {
             _operator.OneMore(_toSpawn, _spawnElite);
             Destroy(gameObject);

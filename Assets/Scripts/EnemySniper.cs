@@ -34,7 +34,7 @@ public class EnemySniper : MonoBehaviour
     private Vector2 _hurtDir = Vector2.zero;
     private bool _condemnt = false;
 
-    public AiSniper AiSuperior { get => _aiSuperior; set => _aiSuperior = value; }
+
     public bool Elite { get => _elite; set => _elite = value; }
 
     // Start is called before the first frame update
@@ -48,9 +48,12 @@ public class EnemySniper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_hurt)
+        if (!_condemnt)
         {
             SetOrientation();
+        }
+        if (!_hurt)
+        {
             AttackLogic();
             Attack();
         }
@@ -197,8 +200,11 @@ public class EnemySniper : MonoBehaviour
 
     private void Hurt()
     {
-        transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 360);
-        _rb.velocity = _hurtDir * _hurtTime * 2.5f;
+        if (_condemnt)
+        {
+            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 10000);
+        }
+        _rb.velocity = _hurtDir * _hurtTime * 15f;
         if (_hurtTime > 0)
         {
             _hurtTime -= Time.deltaTime;
@@ -207,8 +213,8 @@ public class EnemySniper : MonoBehaviour
         {
             if (_condemnt)
             {
+                AiSniper.Instance.Snipers.Remove(this); 
                 Destroy(gameObject);
-                _aiSuperior.Snipers.Remove(this);
             }
             _hurt = false;
             _hurtTime = 0;

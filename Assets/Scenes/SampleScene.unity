@@ -445,7 +445,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 9
+  orthographic size: 11.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -508,8 +508,7 @@ MonoBehaviour:
   _tester: {fileID: 7002272201885041153, guid: 269070f3f0ae5184a82564a74ed59495, type: 3}
   _enemyTypes:
   - {fileID: 3993287412597477516, guid: fc88ce9a1be65d14580fec010a68d56b, type: 3}
-  - {fileID: 3993287412597477516, guid: fc88ce9a1be65d14580fec010a68d56b, type: 3}
-  _enemyCosts: 0100000001000000
+  _enemyCosts: 01000000
 --- !u!4 &936488678
 Transform:
   m_ObjectHideFlags: 0
@@ -600,6 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba140cb2d3dd32409d20318d230a0d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hp: 2
   _inputMode: 0
   _moveSpeedValue: 15
   _dashMoveSpeed: 100
@@ -1013,7 +1013,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1839952966}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

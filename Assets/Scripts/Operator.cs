@@ -85,6 +85,10 @@ public class Operator : MonoBehaviour
         _waveNumber += 1;
         _points = _waveNumber;
         CreateSquad();
+        for (int i = 0; i < GlobalManager.Instance.Players.Count; i++)
+        {
+            GlobalManager.Instance.Players[i].Heal();
+        }
     }
 
     private void CreateSquad()
@@ -97,11 +101,15 @@ public class Operator : MonoBehaviour
         {
             _nonEliteEnemies.Clear();
         }
+        Go();
+    }
 
 
+    private void Go()
+    {
         if (_nonEliteEnemies.Count > 0)
         {
-            if (Random.Range(0f, 1f) < 0.3f)
+            if (Random.Range(0f, 1f) < 0.45f)
             {
                 int i = Random.Range(0, _nonEliteEnemies.Count);
                 _eliteEnemies.Add(_nonEliteEnemies[i]);
@@ -123,7 +131,7 @@ public class Operator : MonoBehaviour
         }
         if (_points > 0)
         {
-            CreateSquad();
+            Go();
         }
         else
         {
@@ -133,15 +141,17 @@ public class Operator : MonoBehaviour
 
     private void SpawnEverything()
     {
-        _range = _eliteEnemies.Count + _nonEliteEnemies.Count;
+        _range = ((_eliteEnemies.Count + _nonEliteEnemies.Count) * 5) + 10;
         
         for (int i = 0; i < _eliteEnemies.Count; i++)
         {
             // DECLARE LA //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            switch(_eliteEnemies[i])
+            Vector3 v = new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0);
+
+            switch (_eliteEnemies[i])
             {
                 case 0:
-                    GameObject go = Instantiate(_tester, new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go = Instantiate(_tester, v, gameObject.transform.rotation);
                     Tester tester = go.GetComponent<Tester>();
                     tester.SpawnElite = true;
                     tester.ToSpawn = _enemyTypes[0];

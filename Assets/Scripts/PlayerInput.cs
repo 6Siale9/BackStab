@@ -11,9 +11,10 @@ public class PlayerInput : MonoBehaviour
 
     private Rigidbody2D _rb;
 
-    private int _hp = 2;
+    [SerializeField] private int _hp = 2;
 
     [SerializeField] private EInputMode _inputMode;
+    private EInputMode _savedInputMode;
     
     private Vector2 _directionController;
     private Vector2 _savedDirection;
@@ -89,6 +90,9 @@ public class PlayerInput : MonoBehaviour
 
 
         GlobalManager.Instance.Players.Add(this);
+
+        _moveSpeedValue = _moveSpeed;
+        _savedInputMode = _inputMode;
     }
 
     private void Update()
@@ -108,25 +112,35 @@ public class PlayerInput : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Enemy") && _moveSpeed == _moveSpeedValue)
         {
             GotHit();
+            Debug.Log("Hurt");
         }
     }
 
     public void GotHit()
     {
+        if (_hp == 1)
+        {
+            _baseDamaged.color = new Color(1, 1, 1, 0);
+            _inputMode = EInputMode.Dead;
+            _rb.velocity = Vector2.zero;
+            _hp = 0;
+        }
         if (_hp == 2)
         {
             _hp = 1;
             _base.color = new Color(1, 1, 1, 0);
         }
-        else
-        {
-            _baseDamaged.color = new Color(1, 1, 1, 0);
-            _inputMode = EInputMode.Dead;
-            _rb.velocity = Vector2.zero;
-        }
+    }
+
+    public void Heal()
+    {
+        _hp = 2;
+        _base.color = new Color(1, 1, 1, 1);
+        _baseDamaged.color = new Color(1, 1, 1, 1);
+        _inputMode = _savedInputMode;
     }
 
     private void VelocityKeyboard()

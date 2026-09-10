@@ -33,15 +33,7 @@ public class AiSniper : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Initialize();
-    }
 
-    private void Initialize()
-    {
-        for (int i = 0; i < _snipers.Count; i++)
-        {
-            _snipers[i].AiSuperior = this;
-        }
     }
 
     // Update is called once per frame
@@ -86,7 +78,7 @@ public class AiSniper : MonoBehaviour
         }
         else if (Snipers.Count == 0)
         {
-
+            Operator.Instance.CheckForWave();
             Destroy(gameObject);
         }
         _attackCd = Random.Range(0, 1.75f);
