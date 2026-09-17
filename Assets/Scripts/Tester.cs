@@ -19,31 +19,40 @@ public class Tester : MonoBehaviour
     public GameObject ToSpawn { get => _toSpawn; set => _toSpawn = value; }
     public bool SpawnElite { get => _spawnElite; set => _spawnElite = value; }
 
-
+    private float _timer = 2f;
 
     private void Start()
     {
-        //int i = _collider.OverlapCollider(_filter, _colliders); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (false/*i > 0*/)
+        _timer = Random.Range(.25f, 10f);
+    }
+
+    private void Update()
+    {
+        if (_timer > 0)
         {
-            _operator.OneMore(_toSpawn, _spawnElite);
-            Destroy(gameObject);
+            _timer -= Time.deltaTime;
         }
         else
         {
-            GameObject go = Instantiate(_toSpawn);
-            
+            GameObject go = Instantiate(_toSpawn, gameObject.transform.position, gameObject.transform.rotation);
+
             EnemySniper sniper = go.GetComponent<EnemySniper>();
             if (sniper != null)
             {
                 sniper.Elite = _spawnElite;
             }
-
             //Add the next enemies here too !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 
             Destroy(gameObject);
         }
     }
+
+    /*
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Destroy(gameObject);
+        _operator.OneMore(_toSpawn, _spawnElite);
+    }
+    */
 }

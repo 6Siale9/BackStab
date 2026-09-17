@@ -1,11 +1,16 @@
 /*
-Enemies die when struck in their lasers
-Elites spawn over themselves
-Damage instakills the player
-Enemies attack upon spawning
+To do :
+Clean every scripts
 More enemy types
 Multiplayer
 Textures
 WorldBorders
 Menus/Menuing
+Add cam movement
+Add endorphin
+Add particles
+Change to OnTriggerStay for the laser (being immobile make the player invincible)
+
+To test: 
+Enemy evade/vulnerability too short
 */

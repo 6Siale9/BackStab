@@ -28,7 +28,8 @@ public class Operator : MonoBehaviour
 
     private List<GameObject> _managers = new List<GameObject>();
 
-    private int _waveNumber = 0;
+    [SerializeField] private int _waveNumber = 0;
+
     private int _points = 0;
 
     [SerializeField] private GameObject _tester;
@@ -139,15 +140,18 @@ public class Operator : MonoBehaviour
         }
     }
 
+    private Vector3 RandomVector()
+    {
+        return new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0);
+    }
+
     private void SpawnEverything()
     {
-        _range = ((_eliteEnemies.Count + _nonEliteEnemies.Count) * 5) + 10;
+        _range = (_eliteEnemies.Count + _nonEliteEnemies.Count) + 5;
         
         for (int i = 0; i < _eliteEnemies.Count; i++)
         {
-            // DECLARE LA //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            Vector3 v = new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0);
-
+            Vector3 v = RandomVector();
             switch (_eliteEnemies[i])
             {
                 case 0:
@@ -155,59 +159,85 @@ public class Operator : MonoBehaviour
                     Tester tester = go.GetComponent<Tester>();
                     tester.SpawnElite = true;
                     tester.ToSpawn = _enemyTypes[0];
+                    tester.Operator = this;
                     break;
 
                 case 1:
-                    GameObject go1 = Instantiate(_tester, new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go1 = Instantiate(_tester, v, gameObject.transform.rotation);
                     Tester tester1 = go1.GetComponent<Tester>();
                     tester1.SpawnElite = true;
                     tester1.ToSpawn = _enemyTypes[1];
+                    tester1.Operator = this;
                     break;
 
                 case 2:
-                    GameObject go2 = Instantiate(_tester, new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go2 = Instantiate(_tester, v, gameObject.transform.rotation);
                     Tester tester2 = go2.GetComponent<Tester>();
                     tester2.SpawnElite = true;
                     tester2.ToSpawn = _enemyTypes[2];
+                    tester2.Operator = this;
                     break;
 
                 case 3:
-                    GameObject go3 = Instantiate(_tester, new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go3 = Instantiate(_tester, v, gameObject.transform.rotation);
                     Tester tester3 = go3.GetComponent<Tester>();
                     tester3.SpawnElite = true;
                     tester3.ToSpawn = _enemyTypes[3];
+                    tester3.Operator = this;
                     break;
 
                 case 4:
-                    GameObject go4 = Instantiate(_tester, new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go4 = Instantiate(_tester, v, gameObject.transform.rotation);
                     Tester tester4 = go4.GetComponent<Tester>();
                     tester4.SpawnElite = true;
                     tester4.ToSpawn = _enemyTypes[4];
+                    tester4.Operator = this;
                     break;
             }
         }
-        for (int i = 0; i < _nonEliteEnemies.Count; i++)
+        for (int u = 0; u < _nonEliteEnemies.Count; u++)
         {
-            switch (_nonEliteEnemies[i])
+            Vector3 v = RandomVector();
+            switch (_nonEliteEnemies[u])
             {
                 case 0:
-                    Instantiate(_enemyTypes[0], new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go = Instantiate(_tester, v, gameObject.transform.rotation);
+                    Tester tester = go.GetComponent<Tester>();
+                    tester.SpawnElite = false;
+                    tester.ToSpawn = _enemyTypes[0];
+                    tester.Operator = this;
                     break;
 
                 case 1:
-                    Instantiate(_enemyTypes[1], new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go1 = Instantiate(_tester, v, gameObject.transform.rotation);
+                    Tester tester1 = go1.GetComponent<Tester>();
+                    tester1.SpawnElite = false;
+                    tester1.ToSpawn = _enemyTypes[1];
+                    tester1.Operator = this;
                     break;
 
                 case 2:
-                    Instantiate(_enemyTypes[2], new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go2 = Instantiate(_tester, v, gameObject.transform.rotation);
+                    Tester tester2 = go2.GetComponent<Tester>();
+                    tester2.SpawnElite = false;
+                    tester2.ToSpawn = _enemyTypes[2];
+                    tester2.Operator = this;
                     break;
 
                 case 3:
-                    Instantiate(_enemyTypes[3], new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go3 = Instantiate(_tester, v, gameObject.transform.rotation);
+                    Tester tester3 = go3.GetComponent<Tester>();
+                    tester3.SpawnElite = false;
+                    tester3.ToSpawn = _enemyTypes[3];
+                    tester3.Operator = this;
                     break;
 
                 case 4:
-                    Instantiate(_enemyTypes[4], new Vector3(Random.Range(-_range, _range), Random.Range(-_range, _range), 0), gameObject.transform.rotation);
+                    GameObject go4 = Instantiate(_tester, v, gameObject.transform.rotation);
+                    Tester tester4 = go4.GetComponent<Tester>();
+                    tester4.SpawnElite = false;
+                    tester4.ToSpawn = _enemyTypes[4];
+                    tester4.Operator = this;
                     break;
             }
         }
@@ -219,5 +249,6 @@ public class Operator : MonoBehaviour
         Tester tester = go.GetComponent<Tester>();
         tester.SpawnElite = spawnElite;
         tester.ToSpawn = toSpawn;
+        tester.Operator = this;
     }
 }

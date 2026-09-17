@@ -14,6 +14,9 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private int _hp = 2;
 
     [SerializeField] private EInputMode _inputMode;
+
+    private float _invincibilityWindow = 0;
+
     private EInputMode _savedInputMode;
     
     private Vector2 _directionController;
@@ -108,6 +111,19 @@ public class PlayerInput : MonoBehaviour
         }
         DashLogic();
         DirLogic();
+        InvincibilityLogic();
+    }
+
+    private void InvincibilityLogic()
+    {
+        if (_invincibilityWindow > 0)
+        {
+            _invincibilityWindow -= Time.deltaTime;
+        }
+        else if (_invincibilityWindow < 0)
+        {
+            _invincibilityWindow = 0;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -115,23 +131,26 @@ public class PlayerInput : MonoBehaviour
         if (collision.CompareTag("Enemy") && _moveSpeed == _moveSpeedValue)
         {
             GotHit();
-            Debug.Log("Hurt");
         }
     }
 
     public void GotHit()
     {
-        if (_hp == 1)
+        if (_invincibilityWindow == 0)
         {
-            _baseDamaged.color = new Color(1, 1, 1, 0);
-            _inputMode = EInputMode.Dead;
-            _rb.velocity = Vector2.zero;
-            _hp = 0;
-        }
-        if (_hp == 2)
-        {
-            _hp = 1;
-            _base.color = new Color(1, 1, 1, 0);
+            _invincibilityWindow += 1;
+            if (_hp == 1)
+            {
+                _baseDamaged.color = new Color(1, 1, 1, 0);
+                _inputMode = EInputMode.Dead;
+                _rb.velocity = Vector2.zero;
+                _hp = 0;
+            }
+            if (_hp == 2)
+            {
+                _hp = 1;
+                _base.color = new Color(1, 1, 1, 0);
+            }
         }
     }
 

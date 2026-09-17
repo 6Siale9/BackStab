@@ -42,7 +42,7 @@ public class EnemySniper : MonoBehaviour
     {
         GetAllPlayer();
         CheckForAi();
-        OrderAttack();
+        FindNearestPlayer();
     }
 
     // Update is called once per frame
@@ -59,7 +59,7 @@ public class EnemySniper : MonoBehaviour
         }
         else
         {
-            Hurt();
+            HurtLogic();
         }
         if (Elite)
         {
@@ -117,6 +117,14 @@ public class EnemySniper : MonoBehaviour
     {
         if (!_hurt && !_attacking)
         {
+        FindNearestPlayer();
+        _windUpTime = .75f;
+        _attacking = true;
+        }
+    }
+
+    private void FindNearestPlayer()
+    {
         float dist = 0;
         for (int i = 0; i < _targets.Count; i++)
         {
@@ -140,11 +148,15 @@ public class EnemySniper : MonoBehaviour
                 }
             }
         }
-        _windUpTime = .75f;
-        _attacking = true;
-        }
     }
 
+    private void ResetAttack()
+    {
+        _blastImg.color = new Color(1, 1, 1, 0);
+        _attacking = false;
+        _damageTiming = false;
+        _blast.SetActive(false);
+    }
 
     private void AttackLogic()
     {
@@ -191,20 +203,19 @@ public class EnemySniper : MonoBehaviour
 
     private void GotHit()
     {
-        _blast.SetActive(false);
+        ResetAttack();
         _hurt = true;
-        _hurtTime = 1.5f;
-        _blastImg.color = new Color(1, 1, 1, 0);
+        _hurtTime = 2f;
         _hurtDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
 
-    private void Hurt()
+    private void HurtLogic()
     {
         if (_condemnt)
         {
-            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 10000);
+            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 1000);
         }
-        _rb.velocity = _hurtDir * _hurtTime * 15f;
+        _rb.velocity = _hurtDir * _hurtTime * 7f;
         if (_hurtTime > 0)
         {
             _hurtTime -= Time.deltaTime;
@@ -234,17 +245,22 @@ public class EnemySniper : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("Trigger");
         if (collision.gameObject.CompareTag("Arrow"))
         {
             ArrowController arrow = collision.gameObject.GetComponent<ArrowController>();
             if (arrow.Go)
             {
-                if (!Elite || _hurt)
+                if (!_elite || _hurt)
                 {
                     _condemnt = true;
+                    GotHit();
                 }
             }
-            GotHit();
+            else
+            {
+                GotHit();
+            }
         }
     }
 }

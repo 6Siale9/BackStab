@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 1838410048813736718}
   - component: {fileID: 1684119774521514690}
   - component: {fileID: 1500071180749116941}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Blast
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -518,7 +518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.3137255, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.3137255, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
