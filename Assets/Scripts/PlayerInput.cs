@@ -19,8 +19,10 @@ public class PlayerInput : MonoBehaviour
 
     private EInputMode _savedInputMode;
     
-    private Vector2 _directionController;
-    private Vector2 _savedDirection;
+    private Vector2 _dirController;
+    private Vector2 _savedDir;
+
+    private Vector2 _damageDir;
 
     private float _upAxisValueKeyboard = 0f;
     private float _downAxisValueKeyboard = 0f;
@@ -41,6 +43,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private int _arrowCapacity = 1;
     [SerializeField] private float _arrowSpeed = 1;
     [SerializeField] private float _arrowStopCd = 1;
+    [SerializeField] private Pointer _pointerPrefab;
     private List<ArrowController> _arrowsFired = new List<ArrowController>();
 
     [Header("Img")]
@@ -112,6 +115,64 @@ public class PlayerInput : MonoBehaviour
         DashLogic();
         DirLogic();
         InvincibilityLogic();
+        ColorLogic();
+        DamageBounceLogic();
+    }
+
+    private void DamageBounceLogic()
+    {
+        if (_invincibilityWindow > .25f)
+        {
+            _rb.velocity = _damageDir * 25;
+        }
+        else if (_hp == 0)
+        {
+            _rb.velocity = Vector2.zero;
+        }
+    }
+
+    private Vector2 RandomVector()
+    {
+        Vector2 v = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        return v.normalized;
+    }
+
+    private void ColorLogic()
+    {
+        if (_invincibilityWindow > .25f)
+        {
+            switch (_hp)
+            {
+                default:
+                case 1:
+                    _base.color = new Color(1, 1, 1, 1);
+                    _baseDamaged.color = new Color(1, 1, 1, 0);
+                    break;
+                case 0:
+                    _baseDamaged.color = new Color(1, 1, 1, 1);
+                    _base.color = new Color(1, 1, 1, 0);
+                    break;
+            }
+        }
+        else
+        {
+            switch (_hp)
+            {
+                default:
+                case 2:
+                    _base.color = new Color(0, .75f, .9f, 1);
+                    _baseDamaged.color = new Color(1, 1, 1, 0);
+                    break;
+                case 1:
+                    _baseDamaged.color = new Color(0, .75f, .9f, 1);
+                    _base.color = new Color(1, 1, 1, 0);
+                    break;
+                case 0:
+                    _baseDamaged.color = new Color(1, 1, 1, 0);
+                    _baseDamaged.color = new Color(1, 1, 1, 0);
+                    break;
+            }
+        }
     }
 
     private void InvincibilityLogic()
@@ -128,7 +189,7 @@ public class PlayerInput : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy") && _moveSpeed == _moveSpeedValue)
+        if (collision.CompareTag("Enemy") && _moveSpeed <= _moveSpeedValue)
         {
             GotHit();
         }
@@ -136,12 +197,13 @@ public class PlayerInput : MonoBehaviour
 
     public void GotHit()
     {
-        if (_invincibilityWindow == 0)
+        if (_invincibilityWindow <= 0 && Hp != 0)
         {
-            _invincibilityWindow += 1;
+            +If.Instance.Appear(transform);
+            _damageDir = RandomVector();
+            _invincibilityWindow += .5f;
             if (_hp == 1)
             {
-                _baseDamaged.color = new Color(1, 1, 1, 0);
                 _inputMode = EInputMode.Dead;
                 _rb.velocity = Vector2.zero;
                 _hp = 0;
@@ -149,7 +211,6 @@ public class PlayerInput : MonoBehaviour
             if (_hp == 2)
             {
                 _hp = 1;
-                _base.color = new Color(1, 1, 1, 0);
             }
         }
     }
@@ -157,8 +218,6 @@ public class PlayerInput : MonoBehaviour
     public void Heal()
     {
         _hp = 2;
-        _base.color = new Color(1, 1, 1, 1);
-        _baseDamaged.color = new Color(1, 1, 1, 1);
         _inputMode = _savedInputMode;
     }
 
@@ -169,10 +228,10 @@ public class PlayerInput : MonoBehaviour
 
     private void VelocityController()
     {
-        _rb.velocity = _directionController.normalized * _moveSpeed;
+        _rb.velocity = _dirController.normalized * _moveSpeed;
         if (_rb.velocity.magnitude > 0)
         {
-            _savedDirection = _rb.velocity.normalized;
+            _savedDir = _rb.velocity.normalized;
         }
     }
 
@@ -180,7 +239,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (_inputMode == EInputMode.Controller)
         {
-            _directionController = vector;
+            _dirController = vector;
         }
     }
 
@@ -221,7 +280,7 @@ public class PlayerInput : MonoBehaviour
             Rigidbody2D arrowRb = arrow.GetComponent<Rigidbody2D>();
             if (EInputMode.Controller == _inputMode)
             {
-                arrowRb.velocity = _savedDirection * _arrowSpeed;
+                arrowRb.velocity = _savedDir * _arrowSpeed;
             }
             else if ((EInputMode.Keyboard == _inputMode))
             {
@@ -235,7 +294,9 @@ public class PlayerInput : MonoBehaviour
             controller.Player = this;
             controller.Speed = _arrowSpeed;
             controller.StopCd = _arrowStopCd;
-        }
+            Pointer pointer = Instantiate(_pointerPrefab, transform);
+            pointer.ToPoint = arrow;
+            }
     }
 
     private void Return()
@@ -260,7 +321,7 @@ public class PlayerInput : MonoBehaviour
         }
         else if (EInputMode.Controller == _inputMode)
         {
-            _cursorController.gameObject.transform.up = -_savedDirection;
+            _cursorController.gameObject.transform.up = -_savedDir;
         }
     }
 }

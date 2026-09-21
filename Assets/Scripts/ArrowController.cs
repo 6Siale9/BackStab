@@ -5,28 +5,22 @@ using UnityEngine.UI;
 
 public class ArrowController : MonoBehaviour
 {
+    #region Attribut
+    private Rigidbody2D _rb; //Set at start
     private float _stopCd = 1;
-
     private bool _stopped = false;
-
     private float _speed = 0;
-    
     private bool _go = false;
-
-    private Rigidbody2D _rb;
-
     private PlayerInput _player;
-
     [SerializeField] private Image _image;
+    #endregion Attribut
 
-
-
-
-
+    #region Accessor
     public float Speed { get => _speed; set => _speed = value; }
     public PlayerInput Player { get => _player; set => _player = value; }
     public float StopCd { get => _stopCd; set => _stopCd = value; }
     public bool Go { get => _go; set => _go = value; }
+    #endregion Accessor
 
     private void Start()
     {
@@ -37,28 +31,22 @@ public class ArrowController : MonoBehaviour
     {
         StopLogic();
         GoLogic();
-        SetOrientation();
+        SetOrientationLogic();
     }
 
-    private void SetOrientation()
+    private void SetOrientationLogic()
     {
         Vector2 origin = transform.position;
         Vector2 dest = _player.transform.position;
-        Vector2 dir = dest - origin;
+        Vector2 dir = dest - origin; //Get vector from 
         _image.transform.up = dir;
-        /*
-        if (_rb.velocity.magnitude > 0)
-        {
-            _image.transform.up = _rb.velocity.normalized;
-        }
-        */
     }
 
     private void StopLogic()
     {
-        if (StopCd > 0)
+        if (_stopCd > 0)
         {
-            StopCd -= Time.deltaTime;
+            _stopCd -= Time.deltaTime;
         }
         else if (!_stopped)
         {

@@ -10,6 +10,7 @@ Add cam movement
 Add endorphin
 Add particles
 Change to OnTriggerStay for the laser (being immobile make the player invincible)
+Arrow not visible
 
 To test: 
 Enemy evade/vulnerability too short

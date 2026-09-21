@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class AiSniper : MonoBehaviour
 {
+    #region Instance
     private static AiSniper _instance;
     public static AiSniper Instance { get => _instance; set => _instance = value; }
-    private void Awake()
+    private void SetInstance()
     {
         if (_instance == null)
         {
@@ -17,26 +18,27 @@ public class AiSniper : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    #endregion Instance
 
+    #region Attribut
+    [SerializeField] private List<EnemySniper> _snipers = new List<EnemySniper>(); //Every enemy snipers currently alive
+    private EnemySniper _lastAttacker; //Last sniper who attacked
+    private float _attackCd; //Randomly set with _attackCdMax and _attackCdMin
+    private float _attackCdValue; //Activates Attack when reaching _attackCd
+    [SerializeField] private float _attackCdMax;
+    [SerializeField] private float _attackCdMin;
+    #endregion Attribut
 
-
-
-    [SerializeField] private List<EnemySniper> _snipers = new List<EnemySniper>();
-
-    private EnemySniper _lastAttacker;
-
-    private float _attackCd;
-
+    #region Accessor
     public List<EnemySniper> Snipers { get => _snipers; set => _snipers = value; }
+    #endregion Accessor
 
-
-    // Start is called before the first frame update
-    void Start()
+    #region Method
+    private void Awake()
     {
-
+        SetInstance();
     }
 
-    // Update is called once per frame
     void Update()
     {
         AttackLogic();
@@ -44,20 +46,20 @@ public class AiSniper : MonoBehaviour
 
     private void AttackLogic()
     {
-        if (_attackCd >= 0)
+        if (_attackCd < _attackCdValue)
         {
-            _attackCd -= Time.deltaTime;
+            _attackCd += Time.deltaTime;
         }
         else
         {
             Attack();
+            _attackCd = 0;
         }
     }
 
     private void Attack()
     {
-
-        if (Snipers.Count > 1)
+        if (Snipers.Count > 1) //If several snipers are alive, choose one at random (not the last who attacked) and fire it
         {
             List<EnemySniper> toGo = new List<EnemySniper>();
             for (int i = 0; i < Snipers.Count; i++)
@@ -71,16 +73,20 @@ public class AiSniper : MonoBehaviour
             toGo[a].OrderAttack();
             _lastAttacker = toGo[a];
         }
-        else if (Snipers.Count == 1)
+
+        else if (Snipers.Count == 1) //If only one sniper is alive, fire it
         {
             Snipers[0].OrderAttack();
             _lastAttacker = Snipers[0];
         }
-        else if (Snipers.Count == 0)
+
+        else if (Snipers.Count == 0) //If no snipers are alive, unsubscribe and self destruct
         {
             Operator.Instance.CheckForWave();
             Destroy(gameObject);
         }
-        _attackCd = Random.Range(0, 1.75f);
+
+        _attackCdValue = Random.Range(_attackCdMin, _attackCdMax);
     }
+    #endregion Method
 }

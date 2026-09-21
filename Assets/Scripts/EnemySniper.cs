@@ -94,7 +94,14 @@ public class EnemySniper : MonoBehaviour
     {
         if (_hurt)
         {
-            _body.color = new Color(1, 1, 1, 1);
+            if (_condemnt)
+            {
+                _body.color = new Color(1, 1, 1, 1);
+            }
+            else
+            {
+                _body.color = new Color(1, 0, 0.3137255f, 1);
+            }
         }
         else
         {
@@ -214,6 +221,7 @@ public class EnemySniper : MonoBehaviour
         if (_condemnt)
         {
             transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 1000);
+            _body.color = new Color(1, 1, 1, 1);
         }
         _rb.velocity = _hurtDir * _hurtTime * 7f;
         if (_hurtTime > 0)
@@ -229,6 +237,7 @@ public class EnemySniper : MonoBehaviour
             }
             _hurt = false;
             _hurtTime = 0;
+            _body.color = new Color(0.8207547f, 0.7538613f, 0.2051887f, 1);
         }
     }
 
@@ -245,7 +254,6 @@ public class EnemySniper : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Trigger");
         if (collision.gameObject.CompareTag("Arrow"))
         {
             ArrowController arrow = collision.gameObject.GetComponent<ArrowController>();
@@ -255,6 +263,7 @@ public class EnemySniper : MonoBehaviour
                 {
                     _condemnt = true;
                     GotHit();
+                    If.Instance.Appear(transform);
                 }
             }
             else

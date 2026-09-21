@@ -45,3 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snipers: []
+  _attackCdMax: 0
+  _attackCdMin: 1.75
