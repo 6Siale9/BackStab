@@ -1,61 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemySniper : MonoBehaviour
 {
-    private List<PlayerInput> _targets = new List<PlayerInput>();
-    private GameObject _lockedOnTarget;
+    #region Attribut
+    [Header("Attack")]
+    [SerializeField] private float _windupTimeThreshold;
+    [SerializeField] private float _lockedWindupTimeThreshold;
+    [SerializeField] private float _blastRemainTimeThreshold;
+    private float _attackTime; //Triggers when reaching _windupTimeThreshold, _attackTimeThreshold and _blastRemainTimeThreshold
 
-    private AiSniper _aiSuperior;
-
+    [Header("GameObject")]
     [SerializeField] private Rigidbody2D _rb;
-
-    [SerializeField] private AiSniper _manager;
-
+    [SerializeField] private GameObject _blast;
+    [SerializeField] private Image _blastImg;
+    [SerializeField] private Image _bodyImg;
     [SerializeField] private bool _elite = false;
 
-    private float _windUpTime;
-    private float _attackTime;
-    private float _blastRemainTime;
+    [Header("Behavior")]
+    [SerializeField] private AiSniper _manager;
     private bool _attacking = false;
-    private bool _canRotate = true;
-    private bool _damageTiming = false;
-
-    [SerializeField] private GameObject _blast;
-
-    [SerializeField] private Image _blastImg;
-    [SerializeField] private Image _body;
-
     private bool _hurt = false;
+    private bool _canRotate = true;
     private float _hurtTime;
+    private float _hurtThreshold;
     private Vector2 _hurtDir = Vector2.zero;
-    private bool _condemnt = false;
+    private bool _condemned = false;
+    private PlayerInput _lockedOnTarget;
 
+    [Header("Colors")]
+    [SerializeField] private Color _eliteGold;
+    [SerializeField] private Color _baseRed;
+    [SerializeField] private Color _hurtWhite;
+    #endregion Attribut
 
     public bool Elite { get => _elite; set => _elite = value; }
 
-    // Start is called before the first frame update
+    #region Method
+    #region Base
     void Start()
     {
-        GetAllPlayer();
         CheckForAi();
-        FindNearestPlayer();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (!_condemnt)
+        if (!_condemned)
         {
-            SetOrientation();
+            OrientationLogic();
         }
         if (!_hurt)
         {
             AttackLogic();
-            Attack();
         }
         else
         {
@@ -65,17 +65,8 @@ public class EnemySniper : MonoBehaviour
         {
             ColorLogic();
         }
-
-
-
-
-        // Debug !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            Debug.Log("Debug");
-            GotHit();
-        }
     }
+    #endregion Base
 
     private void CheckForAi()
     {
@@ -90,70 +81,101 @@ public class EnemySniper : MonoBehaviour
         }
     }
 
+    #region Logic
+    private void OrientationLogic()
+    {
+        if (_canRotate)
+        {
+            if (_lockedOnTarget != null)
+            {
+                Vector2 origin = transform.position;
+                Vector2 dest = _lockedOnTarget.transform.position;
+                Vector2 dir = dest - origin;
+                transform.up = dir.normalized;
+            }
+        }
+    }
+
+    private void AttackLogic()
+    {
+        if (_attacking)
+        {
+            _attackTime += Time.deltaTime;
+
+            if (_attackTime < _windupTimeThreshold)
+            {
+                _blastImg.color = new Color(1, 1, 1, _attackTime * (1 / _windupTimeThreshold));
+            }
+            else if (_attackTime < _lockedWindupTimeThreshold)
+            {
+                _canRotate = false;
+                _blastImg.color = Color.white;
+            }
+            else if (_attackTime < _blastRemainTimeThreshold)
+            {
+                _blast.SetActive(true);
+                _blastImg.color = _baseRed;
+            }
+            else
+            {
+                ResetAttack();
+            }
+        }
+    }
+
+    private void HurtLogic()
+    {
+        _rb.velocity = _hurtDir * _hurtTime * 7f;
+        if (_condemned)
+        {
+            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 1000); //Spin the enemy
+            _bodyImg.color = Color.white;
+        }
+
+        if (_hurtTime < _hurtThreshold)
+        {
+            _hurtTime += Time.deltaTime;
+        }
+        else
+        {
+            if (_condemned)
+            {
+                AiSniper.Instance.Snipers.Remove(this);
+                Destroy(gameObject);
+            }
+            _hurt = false; //HurtLogic is only called if set to true
+            _hurtTime = 0; //Will restart HurtLogic from the begining
+            _bodyImg.color = _baseRed;
+        }
+    }
+
     private void ColorLogic()
     {
         if (_hurt)
         {
-            if (_condemnt)
+            if (_condemned)
             {
-                _body.color = new Color(1, 1, 1, 1);
+                _bodyImg.color = _hurtWhite;
             }
             else
             {
-                _body.color = new Color(1, 0, 0.3137255f, 1);
+                _bodyImg.color = _baseRed;
             }
         }
         else
         {
-            _body.color = new Color(0.8207547f, 0.7538613f, 0.2051887f, 1);
+            _bodyImg.color = _eliteGold;
         }
     }
+    #endregion Logic
 
-    private void GetAllPlayer()
-    {
-        for (int i = 0; i < GlobalManager.Instance.Players.Count; i++)
-        {
-            if (GlobalManager.Instance.Players[i].Hp > 0)
-            {
-                _targets.Add(GlobalManager.Instance.Players[i]);
-            }
-        }
-    }
-
-    public void OrderAttack()
+    public void OrderAttack(PlayerInput target)
     {
         if (!_hurt && !_attacking)
         {
-        FindNearestPlayer();
-        _windUpTime = .75f;
-        _attacking = true;
-        }
-    }
-
-    private void FindNearestPlayer()
-    {
-        float dist = 0;
-        for (int i = 0; i < _targets.Count; i++)
-        {
-            if (i == 0)
-            {
-                Vector2 origin = transform.position;
-                Vector2 dest = _targets[i].transform.position;
-                Vector2 dir = dest - origin;
-                dist = dir.magnitude;
-                _lockedOnTarget = _targets[i].gameObject;
-            }
-            else
-            {
-                Vector2 origin = transform.position;
-                Vector2 dest = _targets[i].transform.position;
-                Vector2 dir = dest - origin;
-                if (dir.magnitude < dist)
-                {
-                    dist = dir.magnitude;
-                    _lockedOnTarget = _targets[i].gameObject;
-                }
-            }
+            _lockedOnTarget = target;
+            _attackTime = 0;
+            _attacking = true;
         }
     }
 
@@ -161,95 +183,15 @@ public class EnemySniper : MonoBehaviour
     {
         _blastImg.color = new Color(1, 1, 1, 0);
         _attacking = false;
-        _damageTiming = false;
         _blast.SetActive(false);
-    }
-
-    private void AttackLogic()
-    {
-        if (_windUpTime >= 0 && _attacking)
-        {
-            _windUpTime -= Time.deltaTime;
-            _blastImg.color = new Color(1, 1, 1, (0.75f - _windUpTime));
-        }
-        else if (_windUpTime < 0)
-        {
-            _windUpTime = 0;
-            _attacking = false;
-            _canRotate = false;
-            _attackTime = 0.25f;
-            _blastRemainTime = .5f;
-            _damageTiming = true;
-            _blastImg.color = new Color(1, 1, 1, 1);
-        }
-    }
-
-    private void Attack()
-    {
-        if (_damageTiming)
-        {
-            if (_attackTime >= 0)
-            {
-                _attackTime -= Time.deltaTime;
-            }
-            else if (_blastRemainTime >= 0)
-            {
-                _blast.SetActive(true);
-                _blastRemainTime -= Time.deltaTime;
-                _blastImg.color = new Color(1, 0, 0.3137255f, 1);
-            }
-            else
-            {
-                _blast.SetActive(false);
-                _canRotate = true;
-                _blastImg.color = new Color(1, 1, 1, 0);
-                _damageTiming = false;
-            }
-        }
     }
 
     private void GotHit()
     {
         ResetAttack();
         _hurt = true;
-        _hurtTime = 2f;
+        _hurtTime = 0;
         _hurtDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-    }
-
-    private void HurtLogic()
-    {
-        if (_condemnt)
-        {
-            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 1000);
-            _body.color = new Color(1, 1, 1, 1);
-        }
-        _rb.velocity = _hurtDir * _hurtTime * 7f;
-        if (_hurtTime > 0)
-        {
-            _hurtTime -= Time.deltaTime;
-        }
-        else
-        {
-            if (_condemnt)
-            {
-                AiSniper.Instance.Snipers.Remove(this); 
-                Destroy(gameObject);
-            }
-            _hurt = false;
-            _hurtTime = 0;
-            _body.color = new Color(0.8207547f, 0.7538613f, 0.2051887f, 1);
-        }
-    }
-
-    private void SetOrientation()
-    {
-        if (_canRotate)
-        {
-            Vector2 origin = transform.position;
-            Vector2 dest = _lockedOnTarget.transform.position;
-            Vector2 dir = dest - origin;
-            transform.up = dir.normalized;
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -261,7 +203,7 @@ public class EnemySniper : MonoBehaviour
             {
                 if (!_elite || _hurt)
                 {
-                    _condemnt = true;
+                    _condemned = true;
                     GotHit();
                     If.Instance.Appear(transform);
                 }
@@ -272,4 +214,5 @@ public class EnemySniper : MonoBehaviour
             }
         }
     }
+    #endregion Method
 }

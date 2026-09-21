@@ -23,8 +23,8 @@ public class AiSniper : MonoBehaviour
     #region Attribut
     [SerializeField] private List<EnemySniper> _snipers = new List<EnemySniper>(); //Every enemy snipers currently alive
     private EnemySniper _lastAttacker; //Last sniper who attacked
-    private float _attackCd; //Randomly set with _attackCdMax and _attackCdMin
-    private float _attackCdValue; //Activates Attack when reaching _attackCd
+    private float _attackCd; //Activates Attack when reaching _attackCd
+    private float _attackCdThreshold; //Randomly set with _attackCdMax and _attackCdMin
     [SerializeField] private float _attackCdMax;
     [SerializeField] private float _attackCdMin;
     #endregion Attribut
@@ -39,25 +39,7 @@ public class AiSniper : MonoBehaviour
         SetInstance();
     }
 
-    void Update()
-    {
-        AttackLogic();
-    }
-
-    private void AttackLogic()
-    {
-        if (_attackCd < _attackCdValue)
-        {
-            _attackCd += Time.deltaTime;
-        }
-        else
-        {
-            Attack();
-            _attackCd = 0;
-        }
-    }
-
-    private void Attack()
+    public void OrderAttack(PlayerInput target)
     {
         if (Snipers.Count > 1) //If several snipers are alive, choose one at random (not the last who attacked) and fire it
         {
@@ -70,13 +52,13 @@ public class AiSniper : MonoBehaviour
                 }
             }
             int a = Random.Range(0, toGo.Count);
-            toGo[a].OrderAttack();
+            toGo[a].OrderAttack(target);
             _lastAttacker = toGo[a];
         }
 
         else if (Snipers.Count == 1) //If only one sniper is alive, fire it
         {
-            Snipers[0].OrderAttack();
+            Snipers[0].OrderAttack(target);
             _lastAttacker = Snipers[0];
         }
 
@@ -86,7 +68,7 @@ public class AiSniper : MonoBehaviour
             Destroy(gameObject);
         }
 
-        _attackCdValue = Random.Range(_attackCdMin, _attackCdMax);
+        _attackCdThreshold = Random.Range(_attackCdMin, _attackCdMax);
     }
     #endregion Method
 }

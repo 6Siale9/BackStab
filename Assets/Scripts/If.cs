@@ -23,8 +23,8 @@ public class If : MonoBehaviour
     }
     #endregion Instance
 
-    private int _frames;
-
+    [SerializeField] private int _activeFrames;
+    private int _frameCount;
     private bool _ready;
 
     [SerializeField] private List<Image> _images = new List<Image>();
@@ -45,9 +45,9 @@ public class If : MonoBehaviour
 
     private void RemainLogic()
     {
-        if (_frames > 0)
+        if (_frameCount <= _activeFrames)
         {
-            _frames -= 1;
+            _frameCount++;
         }
         else if (_ready)
         {
@@ -63,7 +63,7 @@ public class If : MonoBehaviour
         {
             _images[i].color = SetAlpha(Color.black, true);
         }
-        _frames = 2;
+        _frameCount = 0;
         _background.color = SetAlpha(Color.white, true);//new Color(1, 1, 1, 1);
         _ready = true;
     }

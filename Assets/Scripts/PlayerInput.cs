@@ -42,7 +42,6 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private GameObject _arrowPrefab;
     [SerializeField] private int _arrowCapacity = 1;
     [SerializeField] private float _arrowSpeed = 1;
-    [SerializeField] private float _arrowStopCd = 1;
     [SerializeField] private Pointer _pointerPrefab;
     private List<ArrowController> _arrowsFired = new List<ArrowController>();
 
@@ -199,7 +198,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (_invincibilityWindow <= 0 && Hp != 0)
         {
-            +If.Instance.Appear(transform);
+            If.Instance.Appear(transform);
             _damageDir = RandomVector();
             _invincibilityWindow += .5f;
             if (_hp == 1)
@@ -293,7 +292,6 @@ public class PlayerInput : MonoBehaviour
             ArrowsFired.Add(controller);
             controller.Player = this;
             controller.Speed = _arrowSpeed;
-            controller.StopCd = _arrowStopCd;
             Pointer pointer = Instantiate(_pointerPrefab, transform);
             pointer.ToPoint = arrow;
             }
