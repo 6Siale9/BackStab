@@ -94,7 +94,8 @@ public class PlayerInput : MonoBehaviour
 
 
 
-        GlobalManager.Instance.Players.Add(this);
+        GlobalManager.Instance.AllPlayers.Add(this);
+        GlobalManager.Instance.ActivePlayers.Add(this);
 
         _moveSpeedValue = _moveSpeed;
         _savedInputMode = _inputMode;

@@ -10,7 +10,7 @@ public class If : MonoBehaviour
     private static If _instance;
     public static If Instance { get => _instance; set => _instance = value; }
 
-    private void SetInstance()
+    public void TrySetInstance()
     {
         if (_instance == null)
         {
@@ -26,15 +26,13 @@ public class If : MonoBehaviour
     [SerializeField] private int _activeFrames;
     private int _frameCount;
     private bool _ready;
-
     [SerializeField] private List<Image> _images = new List<Image>();
-
     [SerializeField] private Image _background;
 
-
+    #region Method
     private void Awake()
     {
-        SetInstance();
+        TrySetInstance();
     }
 
     // Update is called once per frame
@@ -78,9 +76,9 @@ public class If : MonoBehaviour
         _ready = false;
     }
 
-    private Color SetAlpha(Color color, bool a)
+    private Color SetAlpha(Color color, bool visible)
     {
-        if (a)
+        if (visible)
         {
             Color c = color;
             c.a = 1;
@@ -93,4 +91,5 @@ public class If : MonoBehaviour
             return c;
         }
     }
+    #endregion Method
 }

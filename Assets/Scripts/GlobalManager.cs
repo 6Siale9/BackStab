@@ -8,7 +8,7 @@ public class GlobalManager : MonoBehaviour
     static private GlobalManager instance;
     public static GlobalManager Instance { get => instance; set => instance = value; }
 
-    private void TrySetInstance()
+    public void TrySetInstance()
     {
         if (GlobalManager.Instance == null)
         {
@@ -21,11 +21,19 @@ public class GlobalManager : MonoBehaviour
     }
     #endregion Instance
 
-    private List<PlayerInput> _players = new List<PlayerInput>();
-    public List<PlayerInput> Players { get => _players; set => _players = value; }
+    
+    [SerializeField] private bool _justSet = true; //If in scene, change to false in inspector
+    private List<PlayerInput> _allPlayers = new List<PlayerInput>();
+    private List<PlayerInput> _activePlayers = new List<PlayerInput>();
+
+    public List<PlayerInput> AllPlayers { get => _allPlayers; set => _allPlayers = value; }
+    public List<PlayerInput> ActivePlayers { get => _activePlayers; set => _activePlayers = value; }
 
     void Awake()
     {
-        TrySetInstance();
+        if (!_justSet) //Only allow GlobalMangers in scene to fight for instance
+        {
+            TrySetInstance();
+        }
     }
 }

@@ -21,7 +21,8 @@ public class AiSniper : MonoBehaviour
     #endregion Instance
 
     #region Attribut
-    [SerializeField] private List<EnemySniper> _snipers = new List<EnemySniper>(); //Every enemy snipers currently alive
+    private List<EnemySniper> _snipers = new List<EnemySniper>(); //Every enemy snipers currently alive
+    private List<EnemySniper> _snipersAvailable = new List<EnemySniper>(); //Every enemy snipers not attacking
     private EnemySniper _lastAttacker; //Last sniper who attacked
     private float _attackCd; //Activates Attack when reaching _attackCd
     private float _attackCdThreshold; //Randomly set with _attackCdMax and _attackCdMin
@@ -31,6 +32,7 @@ public class AiSniper : MonoBehaviour
 
     #region Accessor
     public List<EnemySniper> Snipers { get => _snipers; set => _snipers = value; }
+    public List<EnemySniper> SnipersAvailable { get => _snipersAvailable; set => _snipersAvailable = value; }
     #endregion Accessor
 
     #region Method
