@@ -96,11 +96,8 @@ public class Operator : MonoBehaviour
         }
         else
         {
-            if (_launchAttack)
-            {
-                Attack();
-                _launchAttack = false;
-            }
+            _attackTimer = 0;
+            Attack();
         }
     }
     #endregion Logic
@@ -299,8 +296,12 @@ public class Operator : MonoBehaviour
     private void AttackPlayer(PlayerInput target)
     {
         List<Ai> am = _managers; //am for available managers
+        if (am.Count > 0)
+        {
+            _managers[Random.Range(0, _managers.Count)].Attack(target);
+        }
 
-        _managers[Random.Range(0, _managers.Count)].Attack(target);
+        Debug.Log("Operator order attack");
     }
     #endregion Attack
 

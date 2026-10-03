@@ -35,15 +35,9 @@ public class Tester : MonoBehaviour
         else
         {
             GameObject go = Instantiate(_toSpawn, gameObject.transform.position, gameObject.transform.rotation);
-
-            EnemySniper sniper = go.GetComponent<EnemySniper>();
-            if (sniper != null)
-            {
-                sniper.Elite = _spawnElite;
-            }
-            //Add the next enemies here too !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
+            Enemy script = go.GetComponent<Enemy>();
+            script.EliteEnemy = _spawnElite;
+            script.Player = GlobalManager.Instance.ActivePlayers[Random.Range(0, GlobalManager.Instance.ActivePlayers.Count)];
             Destroy(gameObject);
         }
     }

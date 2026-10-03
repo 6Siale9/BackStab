@@ -39,6 +39,17 @@ public class AiSniper : Ai
     private void Awake()
     {
         SetInstance();
+        Subscribe();
+    }
+
+    private void Update()
+    {
+        if (Snipers.Count == 0) //If no snipers are alive, unsubscribe and self destruct
+        {
+            Operator.Instance.Managers.Remove(this);
+            Operator.Instance.CheckForWave();
+            Destroy(gameObject);
+        }
     }
 
     public override void Attack(PlayerInput target)
@@ -66,6 +77,7 @@ public class AiSniper : Ai
 
         else if (Snipers.Count == 0) //If no snipers are alive, unsubscribe and self destruct
         {
+            Operator.Instance.Managers.Remove(this);
             Operator.Instance.CheckForWave();
             Destroy(gameObject);
         }

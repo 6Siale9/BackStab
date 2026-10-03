@@ -5,4 +5,9 @@ using UnityEngine;
 public abstract class Ai : MonoBehaviour
 {
     public abstract void Attack(PlayerInput player);
+
+    protected void Subscribe()
+    {
+        Operator.Instance.Managers.Add(this);
+    }
 }

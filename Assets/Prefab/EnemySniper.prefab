@@ -379,12 +379,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dc8b642ca55954c8432f2270ca7b7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _windupTimeThreshold: 1
+  _lockedWindupTimeThreshold: 2
+  _blastRemainTimeThreshold: 3
   _rb: {fileID: 7946860858494073773}
-  _manager: {fileID: 6791700155719339502, guid: de155660fe030164eb9dc433c62cde86, type: 3}
-  _elite: 0
   _blast: {fileID: 2384714625676958991}
   _blastImg: {fileID: 6964928960687814676}
-  _body: {fileID: 3866684386080731849}
+  _bodyImg: {fileID: 3866684386080731849}
+  _elite: 0
+  _manager: {fileID: 6791700155719339502, guid: de155660fe030164eb9dc433c62cde86, type: 3}
+  _hurtThreshold: 1.2
+  _eliteGold: {r: 0.7058824, g: 0.56078434, b: 0.14509805, a: 1}
+  _baseRed: {r: 0.8867924, g: 0.04601282, b: 0.19558737, a: 1}
+  _hurtWhite: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4680883472496605699
 GameObject:
   m_ObjectHideFlags: 0

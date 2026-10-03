@@ -23,11 +23,11 @@ public class EnemySniper : Enemy
 
     [Header("Behavior")]
     [SerializeField] private AiSniper _manager;
+    [SerializeField] private float _hurtThreshold;
+    private float _hurtTime;
     private bool _attacking = false;
     private bool _hurt = false;
     private bool _canRotate = true;
-    private float _hurtTime;
-    private float _hurtThreshold;
     private Vector2 _hurtDir = Vector2.zero;
     private bool _condemned = false;
     private PlayerInput _lockedOnTarget;
@@ -45,6 +45,8 @@ public class EnemySniper : Enemy
     void Start()
     {
         CheckForAi();
+        _lockedOnTarget = Player;
+        _elite = EliteEnemy;
     }
 
     void Update()
@@ -125,10 +127,10 @@ public class EnemySniper : Enemy
 
     private void HurtLogic()
     {
-        _rb.velocity = _hurtDir * _hurtTime * 7f;
+        _rb.velocity = _hurtDir * ((_hurtThreshold - _hurtTime)/_hurtThreshold) * 20f;
         if (_condemned)
         {
-            transform.Rotate(Vector3.forward, _hurtTime * Time.deltaTime * 1000); //Spin the enemy
+            transform.Rotate(Vector3.forward, ((_hurtThreshold - _hurtTime) / _hurtThreshold) * Time.deltaTime * 1000); //Spin the enemy
             _bodyImg.color = Color.white;
         }
 
@@ -145,7 +147,7 @@ public class EnemySniper : Enemy
             }
             _hurt = false; //HurtLogic is only called if set to true
             _hurtTime = 0; //Will restart HurtLogic from the begining
-            _bodyImg.color = _baseRed;
+            _rb.velocity = Vector2.zero;
         }
     }
 
@@ -175,15 +177,18 @@ public class EnemySniper : Enemy
         {
             _lockedOnTarget = target;
             _attackTime = 0;
+            Debug.Log(_attacking);
             _attacking = true;
         }
     }
 
     private void ResetAttack()
     {
+        Debug.Log("Reset");
         _blastImg.color = new Color(1, 1, 1, 0);
         _attacking = false;
         _blast.SetActive(false);
+        _canRotate = true;
     }
 
     private void GotHit()
@@ -205,7 +210,6 @@ public class EnemySniper : Enemy
                 {
                     _condemned = true;
                     GotHit();
-                    If.Instance.Appear(transform);
                 }
             }
             else

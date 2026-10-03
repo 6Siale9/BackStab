@@ -37,7 +37,7 @@ public class ArrowController : MonoBehaviour
 
     private void StopLogic()
     {
-        if (_stopCd >= _stopCdThreshold)
+        if (_stopCd <= _stopCdThreshold)
         {
             _stopCd += Time.deltaTime;
         }
@@ -76,11 +76,8 @@ public class ArrowController : MonoBehaviour
     {
         if (collision.tag == "Player" && _stopped)
         {
-            if (GetComponent<PlayerInput>() == _player)
-            {
                 _player.ArrowsFired.Remove(this);
                 Destroy(gameObject);
-            }
         }
     }
     #endregion Method

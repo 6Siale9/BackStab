@@ -59,10 +59,10 @@ public class If : MonoBehaviour
         transform.rotation = new Quaternion(transform.rotation.w, transform.rotation.x, transform.rotation.y, Random.Range(0f, 360f));
         for (int i = 0; i < _images.Count; i++)
         {
-            _images[i].color = SetAlpha(Color.black, true);
+            _images[i].color = SetAlpha(Color.white, true);
         }
         _frameCount = 0;
-        _background.color = SetAlpha(Color.white, true);//new Color(1, 1, 1, 1);
+        _background.color = SetAlpha(Color.black, true);//new Color(1, 1, 1, 1);
         _ready = true;
     }
 
@@ -70,9 +70,9 @@ public class If : MonoBehaviour
     {
         for (int i = 0; i < _images.Count; i++)
         {
-            _images[i].color = SetAlpha(Color.black, false);
+            _images[i].color = SetAlpha(Color.white, false);
         }
-        _background.color = SetAlpha(Color.white, false);
+        _background.color = SetAlpha(Color.black, false);
         _ready = false;
     }
 

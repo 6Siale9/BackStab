@@ -29,6 +29,8 @@ public class PlayerInput : MonoBehaviour
     private float _rightAxisValueKeyboard = 0f;
     private float _leftAxisValueKeyboard = 0f;
 
+    [SerializeField] private GlobalManager _globalManager;
+
     [SerializeField] private float _moveSpeedValue = 1f;
     private float _moveSpeed = 1f;
 
@@ -91,7 +93,10 @@ public class PlayerInput : MonoBehaviour
 
 
 
-
+        if (GlobalManager.Instance == null)
+        {
+            GlobalManager.Instance = Instantiate(_globalManager);
+        }
 
 
         GlobalManager.Instance.AllPlayers.Add(this);
@@ -117,6 +122,18 @@ public class PlayerInput : MonoBehaviour
         InvincibilityLogic();
         ColorLogic();
         DamageBounceLogic();
+
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            if (_inputMode == EInputMode.Controller)
+            {
+                _inputMode = EInputMode.Keyboard;
+            }
+            else if (_inputMode == EInputMode.Keyboard)
+            {
+                _inputMode = EInputMode.Controller;
+            }
+        }
     }
 
     private void DamageBounceLogic()
@@ -197,9 +214,8 @@ public class PlayerInput : MonoBehaviour
 
     public void GotHit()
     {
-        if (_invincibilityWindow <= 0 && Hp != 0)
+        if (_invincibilityWindow <= 0 && Hp != 0 && _moveSpeed == _moveSpeedValue)
         {
-            If.Instance.Appear(transform);
             _damageDir = RandomVector();
             _invincibilityWindow += .5f;
             if (_hp == 1)
