@@ -23,7 +23,7 @@ public class Operator : MonoBehaviour
 
     #region Attribut
     [Header("Spawn")]
-    [SerializeField] private int _waveNumber = 0; //SerializeField for debug and test purpose
+    [SerializeField] private int _waveNumber = 0; // SerializeField for debug and test purpose
     [SerializeField] private List<GameObject> _enemyTypes = new List<GameObject>();
     [SerializeField] private List<int> _enemyCosts = new List<int>();
     [SerializeField] private GameObject _tester;
@@ -33,7 +33,7 @@ public class Operator : MonoBehaviour
     private float _range = 0;
 
     [Header("Attack")]
-    private List<Manager> _managers = new List<Manager>();
+    private List<Ai> _managers = new List<Ai>();
     [SerializeField] private float _attackTimerMax;
     [SerializeField] private float _attackTimerMin;
     private float _attackTimerThreshold;
@@ -49,7 +49,7 @@ public class Operator : MonoBehaviour
     [SerializeField] private bool _justSet = true; // Change to false if in scene in inspector
     #endregion Attribut
 
-    public List<Manager> Managers { get => _managers; set => _managers = value; }
+    public List<Ai> Managers { get => _managers; set => _managers = value; }
 
     #region Method
     void Awake()
@@ -298,7 +298,7 @@ public class Operator : MonoBehaviour
 
     private void AttackPlayer(PlayerInput target)
     {
-        List<Manager> am = _managers; //am for available managers
+        List<Ai> am = _managers; //am for available managers
 
         _managers[Random.Range(0, _managers.Count)].Attack(target);
     }

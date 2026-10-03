@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class EnemySniper : MonoBehaviour
+public class EnemySniper : Enemy
 {
     #region Attribut
     [Header("Attack")]
@@ -169,7 +169,7 @@ public class EnemySniper : MonoBehaviour
     }
     #endregion Logic
 
-    public void OrderAttack(PlayerInput target)
+    public override void OrderAttack(PlayerInput target)
     {
         if (!_hurt && !_attacking)
         {

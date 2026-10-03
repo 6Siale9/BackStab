@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AiSniper : Manager
+public class AiSniper : Ai
 {
     #region Instance
     private static AiSniper _instance;
@@ -40,8 +40,6 @@ public class AiSniper : Manager
     {
         SetInstance();
     }
-
-
 
     public override void Attack(PlayerInput target)
     {
