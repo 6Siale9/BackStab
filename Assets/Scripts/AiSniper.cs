@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AiSniper : MonoBehaviour
+public class AiSniper : Manager
 {
     #region Instance
     private static AiSniper _instance;
@@ -41,7 +41,9 @@ public class AiSniper : MonoBehaviour
         SetInstance();
     }
 
-    public void OrderAttack(PlayerInput target)
+
+
+    public override void Attack(PlayerInput target)
     {
         if (Snipers.Count > 1) //If several snipers are alive, choose one at random (not the last who attacked) and fire it
         {

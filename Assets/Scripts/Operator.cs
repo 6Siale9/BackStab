@@ -33,7 +33,7 @@ public class Operator : MonoBehaviour
     private float _range = 0;
 
     [Header("Attack")]
-    private List<GameObject> _managers = new List<GameObject>();
+    private List<Manager> _managers = new List<Manager>();
     [SerializeField] private float _attackTimerMax;
     [SerializeField] private float _attackTimerMin;
     private float _attackTimerThreshold;
@@ -49,7 +49,7 @@ public class Operator : MonoBehaviour
     [SerializeField] private bool _justSet = true; // Change to false if in scene in inspector
     #endregion Attribut
 
-    public List<GameObject> Managers { get => _managers; set => _managers = value; }
+    public List<Manager> Managers { get => _managers; set => _managers = value; }
 
     #region Method
     void Awake()
@@ -298,32 +298,9 @@ public class Operator : MonoBehaviour
 
     private void AttackPlayer(PlayerInput target)
     {
-        List<GameObject> am = _managers; //am for available managers
+        List<Manager> am = _managers; //am for available managers
 
-        for (int i = 0; i < _managers.Count; i++)
-        {
-
-            AiSniper sniper = _managers[i].GetComponent<AiSniper>();
-            if (sniper != null)
-            {
-                if (sniper.Snipers.Count > 1)
-                {
-
-                }
-            }
-            else
-            {
-                //Other enemy types here !!
-            }
-
-
-
-
-
-        }
-
-
-        Random.Range(0, _managers.Count);
+        _managers[Random.Range(0, _managers.Count)].Attack(target);
     }
     #endregion Attack
 
