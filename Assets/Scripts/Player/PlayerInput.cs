@@ -223,6 +223,7 @@ public class PlayerInput : MonoBehaviour
                 _inputMode = EInputMode.Dead;
                 _rb.velocity = Vector2.zero;
                 _hp = 0;
+                GlobalManager.Instance.ActivePlayers.Remove(this);
             }
             if (_hp == 2)
             {
@@ -233,6 +234,10 @@ public class PlayerInput : MonoBehaviour
 
     public void Heal()
     {
+        if (Hp == 0)
+        {
+            GlobalManager.Instance.ActivePlayers.Add(this);
+        }
         _hp = 2;
         _inputMode = _savedInputMode;
     }
