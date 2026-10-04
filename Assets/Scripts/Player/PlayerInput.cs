@@ -54,6 +54,7 @@ public class PlayerInput : MonoBehaviour
 
     public List<ArrowController> ArrowsFired { get => _arrowsFired; set => _arrowsFired = value; }
     public int Hp { get => _hp; set => _hp = value; }
+    public EInputMode SavedInputMode { get => _savedInputMode; set => _savedInputMode = value; }
 
     private void Awake()
     {
@@ -98,12 +99,11 @@ public class PlayerInput : MonoBehaviour
             GlobalManager.Instance = Instantiate(_globalManager);
         }
 
-
         GlobalManager.Instance.AllPlayers.Add(this);
         GlobalManager.Instance.ActivePlayers.Add(this);
 
         _moveSpeedValue = _moveSpeed;
-        _savedInputMode = _inputMode;
+        SavedInputMode = _inputMode;
     }
 
     private void Update()
@@ -128,12 +128,26 @@ public class PlayerInput : MonoBehaviour
             if (_inputMode == EInputMode.Controller)
             {
                 _inputMode = EInputMode.Keyboard;
+                _savedInputMode = _inputMode;
+                Saved.Instance.InputMode = _savedInputMode;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
             }
             else if (_inputMode == EInputMode.Keyboard)
             {
                 _inputMode = EInputMode.Controller;
+                _savedInputMode = _inputMode;
+                Saved.Instance.InputMode = _savedInputMode;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
+    }
+
+    private void Start()
+    {
+        _inputMode = Saved.Instance.InputMode;
+        _savedInputMode = _inputMode;
     }
 
     private void DamageBounceLogic()
@@ -224,10 +238,12 @@ public class PlayerInput : MonoBehaviour
                 _rb.velocity = Vector2.zero;
                 _hp = 0;
                 GlobalManager.Instance.ActivePlayers.Remove(this);
+                SoundManager.Instance.PlayerDead();
             }
             if (_hp == 2)
             {
                 _hp = 1;
+                SoundManager.Instance.PlayerHurt();
             }
         }
     }
@@ -239,7 +255,7 @@ public class PlayerInput : MonoBehaviour
             GlobalManager.Instance.ActivePlayers.Add(this);
         }
         _hp = 2;
-        _inputMode = _savedInputMode;
+        _inputMode = SavedInputMode;
     }
 
     private void VelocityKeyboard()

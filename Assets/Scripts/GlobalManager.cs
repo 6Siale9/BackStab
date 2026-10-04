@@ -13,6 +13,7 @@ public class GlobalManager : MonoBehaviour
         if (GlobalManager.Instance == null)
         {
             GlobalManager.Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -25,9 +26,11 @@ public class GlobalManager : MonoBehaviour
     [SerializeField] private bool _justSet = true; //If in scene, change to false in inspector
     private List<PlayerInput> _allPlayers = new List<PlayerInput>();
     private List<PlayerInput> _activePlayers = new List<PlayerInput>();
+    private Dictionary<PlayerInput, EInputMode> _playerModes = new Dictionary<PlayerInput, EInputMode>();
 
     public List<PlayerInput> AllPlayers { get => _allPlayers; set => _allPlayers = value; }
     public List<PlayerInput> ActivePlayers { get => _activePlayers; set => _activePlayers = value; }
+    public Dictionary<PlayerInput, EInputMode> PlayerModes { get => _playerModes; set => _playerModes = value; }
 
     void Awake()
     {

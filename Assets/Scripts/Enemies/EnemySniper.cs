@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemySniper : Enemy
 {
@@ -194,6 +193,7 @@ public class EnemySniper : Enemy
     private void GotHit()
     {
         ResetAttack();
+        SoundManager.Instance.EnemyHurt();
         _hurt = true;
         _hurtTime = 0;
         _hurtDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;

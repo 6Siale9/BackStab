@@ -50,6 +50,7 @@ public class Operator : MonoBehaviour
     #endregion Attribut
 
     public List<Ai> Managers { get => _managers; set => _managers = value; }
+    public int WaveNumber { get => _waveNumber; set => _waveNumber = value; }
 
     #region Method
     void Awake()
@@ -115,8 +116,8 @@ public class Operator : MonoBehaviour
 
     private void NewWave()
     {
-        _waveNumber += 1;
-        _points = _waveNumber;
+        WaveNumber += 1;
+        _points = WaveNumber;
         ClearForNewSquad();
         NewSquad();
         for (int i = 0; i < GlobalManager.Instance.AllPlayers.Count; i++) //Heal all players

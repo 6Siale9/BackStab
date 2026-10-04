@@ -23,7 +23,7 @@ public class Tester : MonoBehaviour
 
     private void Start()
     {
-        _timer = Random.Range(.25f, 10f);
+        _timer = Random.Range(.25f, 2f);
     }
 
     private void Update()
